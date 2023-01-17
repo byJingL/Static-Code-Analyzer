@@ -1,7 +1,7 @@
 # Static-Code-Analyzer
 This program can check code format of Python files meets the standards and recommendations according to PEP8.
 ## Main Skill
-
+docstrings
 ## Theory
 
 ## How to use
