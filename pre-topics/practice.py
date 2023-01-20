@@ -61,3 +61,66 @@ swimming.append('Kate')
 print(classmates)
 print(cinema)
 print(swimming)
+
+# ------------------ Regex, re module --------------- #
+import re
+
+print('======== Regex part ========')
+
+
+regexp = r'hello'
+result = re.match(regexp, 'hello, Jane')
+print(result) # <re.Match object; span=(0, 5), match='hello'>
+print(result is None) # False
+print(bool(result)) # True
+
+print(re.match(regexp, 'a hello, Jane')) # None
+
+print(bool(re.match('Where.?.?.? my mind.', "Where's my mind?"))) # True
+print(bool(re.match(r'Where.?.?.? my mind.', "Where's my mind?"))) # True
+
+print(r'\n')
+
+string = 'Backslash?'
+string = re.escape(string)
+
+# ------------------ Regex, Shorthands --------------- #
+print(re.match('\w', 'X'))
+print(re.match('\\w', 'X'))
+print(re.match(r'\w', 'X'))
+
+print(r'\\w', r'\w')
+print(re.match(r'\\w', r'\w'))
+
+print('ha\bppy') # hppy
+print(r'\b') # \b
+
+# boundary shorthand
+print(re.match(r'hair\b', 'hair')) # match
+print(re.match(r'hair\b', 'hair style')) # match
+print(re.match(r'hair\b', 'haircut')) # None, no match
+print(re.match(r'hair\b', 'hair\n')) # match
+print(re.match(r'hair\b', 'hair \n')) # match
+
+print(re.match(r'hair\B', 'hair')) # None, no match
+print(re.match(r'hair\B', 'hair style')) # None, no match
+print(re.match(r'hair\B', 'haircut')) # match
+print(re.match(r'hair\B', 'hair\n')) # None, no match
+print(re.match(r'hair\B', 'hair \n')) # None, no match
+
+print(re.match('\Ahair', 'haircut')) # match
+print(re.match('\Ahair', 'hair style')) # match
+print(re.match('\Ahair', 'long hair')) # not match
+print(re.match('\Ahair', 'brownhair')) # not match
+
+print(re.match('hair\Z', 'hair')) # match
+print(re.match('hair\Z', 'hair style')) #not match
+print(re.match('hair\Z', 'haircut')) #not match
+print(re.match('hair\Z', 'long hair')) #not match
+
+print(re.match("^Bring cash", "Bring cash$")) # match
+print(re.match("^Bring cash", "^Bring cash$")) # not match
+print(re.match("^Bring cash", "A Bring cash$")) # not match
+print(re.match("Bring cash", "Bring cash$")) # match the start by default
+
+print(re.match("h?ello", 'yello'))

@@ -1,15 +1,27 @@
 # write your code here
 import os
 import argparse
+import re
 
 ISSUE_DICT = {
-    'S001': 'Too long',
-    'S002': 'Indentation is not a multiple of four',
-    'S003': 'Unnecessary semicolon after a statement',
-    'S004': 'Less than two spaces before inline comments',
-    'S005': 'TODO found',
-    'S006': 'More than two blank lines preceding a code line',
+    'S001': "Too long",
+    'S002': "Indentation is not a multiple of four",
+    'S003': "Unnecessary semicolon after a statement",
+    'S004': "Less than two spaces before inline comments",
+    'S005': "TODO found",
+    'S006': "More than two blank lines preceding a code line",
 }
+
+
+def space_counter(string):
+    """Return number of start spaces in given string."""
+    num = 0
+    for char in string:
+        if char == ' ':
+            num += 1
+        else:
+            break
+    return num
 
 
 def get_issue_meaasge(line_num, error_code):
@@ -18,11 +30,11 @@ def get_issue_meaasge(line_num, error_code):
     return message
 
 
-def check_issues(data):
+def check_issues1(data):
     """
-    Return a dictionary contains all issue numbers for given file data with line number as keys.
+    Return a dictionary contains issue01-06 for given file data with line number as keys.
 
-    :param data: file data
+    :param data: list of strings
     :return: dict = {
         1: [issue1, issue2, ...],
         2: [issue1, ...],
@@ -60,6 +72,34 @@ def check_issues(data):
     return issue_dict
 
 
+def check_issues2(data):
+    """
+    Return a list contains issue info of issue07-09 for given file data.
+
+    :param data: file data
+    :return: list = [info of issue7, info of issue8, ...]
+    """
+    issue_list = []
+    for i in range(len(data)):
+
+        if data[i] == '':
+            continue
+
+        if issue_s007(data[i]):
+            message = issue_s007(data[i])
+            issue_list.append(f"Line {i + 1}: S007 {message}")
+
+        if issue_s008(data[i]):
+            message = issue_s008(data[i])
+            issue_list.append(f"Line {i + 1}: S008 {message}")
+
+        if issue_s009(data[i]):
+            message = issue_s009(data[i])
+            issue_list.append(f"Line {i + 1}: S009 {message}")
+
+    return issue_list
+
+
 def get_files(path):
     """Return a list of all file path in the given dictionary path."""
     file_list = []
@@ -80,12 +120,7 @@ def issue_s001(s):
 
 def issue_s002(s):
     """Return True if the indentation is not a multiple of four."""
-    count = 0
-    for char in s:
-        if char == ' ':
-            count += 1
-        else:
-            break
+    count = space_counter(s)
     if count % 4 != 0:
         return True
     return False
@@ -127,6 +162,41 @@ def issue_s005(s):
     return False
 
 
+def issue_s007(s):
+    """Return issue message if there are too many spaces after construction_name (def or class)."""
+    s = s.strip()  # s with no start spaces
+    if s.split()[0] == 'class':
+        if space_counter(s[5:]) > 1:
+            return "Too many spaces after 'class'"
+    if s.split()[0] == 'def':
+        if space_counter(s[3:]) > 1:
+            return "Too many spaces after 'def'"
+    return False
+
+
+def issue_s008(s):
+    """Return issue message if Class name is not written in CamelCase."""
+    s = s.strip()  # s with no start spaces
+    if s.split()[0] == 'class':
+        class_name = s.split()[1][:-1]
+        if '_' in class_name or not re.match(r'[A-Z].+', class_name):
+            if '(' in class_name:
+                class_name = class_name.split('(')[0]
+            return f"Class name '{class_name}' should use CamelCase"
+
+    return False
+
+
+def issue_s009(s):
+    """Return issue message if function name is not written in snake_case."""
+    s = s.strip()  # s with no start spaces
+    if s.split()[0] == 'def':
+        func_name = s.split()[1].split('(')[0]
+        if not re.match(r'[a-z0-9_]+', func_name):
+            return f"Function name '{func_name}' should use snake_case"
+    return False
+
+
 # --------------------------- main function ----------------------- #
 def main():
     parser = argparse.ArgumentParser(description='Check the code style of python file.')
@@ -149,11 +219,16 @@ def main():
             data = data.splitlines()
 
         warnings_on_path = []
-        issues = check_issues(data)
-        for line in issues:
-            if len(issues[line]) > 0:
-                for issue in issues[line]:
+        # Check issues 1-6
+        issues1 = check_issues1(data)
+        for line in issues1:
+            if len(issues1[line]) > 0:
+                for issue in issues1[line]:
                     warnings_on_path.append(get_issue_meaasge(line, issue))
+        # Check issues 7-9
+        issues2 = check_issues2(data)
+        for message in issues2:
+            warnings_on_path.append(message)
         # warnings dict with path as keys and all issue messages as values
         warnings[path] = warnings_on_path
 
