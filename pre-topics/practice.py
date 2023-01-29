@@ -124,3 +124,65 @@ print(re.match("^Bring cash", "A Bring cash$")) # not match
 print(re.match("Bring cash", "Bring cash$")) # match the start by default
 
 print(re.match("h?ello", 'yello'))
+
+# ------------------ ast module --------------- #
+print('===========ast=============')
+# parse and dump
+import ast
+expression = '1 + 2'
+tree = ast.parse(expression)
+print(ast.dump(tree))
+"""
+Module(
+	body=[
+		Expr(
+			value=BinOp(
+				left=Constant(value=1), 
+				op=Add(), 
+				right=Constant(value=2)
+        	),
+        ),
+    ], 
+   type_ignores=[],
+)
+"""
+# walk
+nodes = ast.walk(tree)
+for node in nodes:
+   print(node)
+# <ast.Module object at 0x1006584c0>
+# <ast.Expr object at 0x100658550>
+# <ast.BinOp object at 0x100658b20>
+# <ast.Constant object at 0x10065b3a0>
+# <ast.Add object at 0x100728c40>
+# <ast.Constant object at 0x10065b6a0>
+
+# node_visitor
+class BinOpLister(ast.NodeVisitor):
+	def visit_BinOp(self, node):
+		print(node.left)
+		print(node.op)
+		print(node.right)
+		self.generic_visit(node)
+BinOpLister().visit(tree)
+
+# literal evaluate
+user_input = '15'
+print(type(user_input))  # <class 'str'>
+check_user_input = ast.literal_eval(user_input)
+print(type(check_user_input))  # <class 'int'>
+
+
+# lineno and end_lineno
+with open('pre-topics/calculation.py') as file:
+	data = file.read()
+	print(type(data))
+	tree = ast.parse(data)
+
+for n in tree.body:
+	print(n, n.lineno, n.end_lineno)
+
+# <ast.Assign object at 0x104f03fa0> 1 1
+# <ast.Assign object at 0x104f03f40> 2 2
+# <ast.Assign object at 0x104f404c0> 3 3
+# <ast.Expr object at 0x104f403d0> 4 4
