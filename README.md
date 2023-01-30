@@ -1,7 +1,7 @@
 # Static-Code-Analyzer
 This program can check code format of Python files meets the standards and recommendations according to PEP8.
 ## Main Skill
-re module, ast module, regexp, AST, docstrings  
+re module, ast module, regexp, AST, argparse module, docstrings  
 ## Theory
 All python code format issues included below are checked by two methods:  
 1. Read the file line by line as list of strings, check them one by one using regular expression (regex) and re module.
